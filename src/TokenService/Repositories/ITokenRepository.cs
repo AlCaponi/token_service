@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace TokenService.Repositories
 {
-    public interface ITokenRepository
+    public interface ITokenRepository : IDictionary<string, Token>
     {
         
     }
