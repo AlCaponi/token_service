@@ -1,0 +1,129 @@
+---
+swagger: '2.0'
+info:
+  description: this service manages access tokens
+  version: 0.0.1
+  title: Token Service
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /v1/tokens
+paths:
+  /{id}:
+    get:
+      summary: return the token identified by id
+      parameters:
+        - name: id
+          in: path
+          description: the tokens id
+          required: true
+          type: string
+      responses:
+        200:
+          description: found a valid token
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TokenResponse"
+        404:
+          description: token with the given id not found
+    head:
+      summary: check wheather the token exists and is valid
+      description: "this endpoint does conceptually the same as the same GET endpoint but is much more efficent, since it does not include unnecessary information in body and headers"
+      parameters:
+        - name: id
+          in: path
+          description: the tokens id
+          required: true
+          type: string
+      responses:
+        200:
+          description: found a valid token
+        404:
+          description: token with the given id was not found or is invalid
+    post:
+      summary: validate the token
+      parameters:
+        - name: id
+          in: path
+          description: the tokens id
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: the tokens new writeable information
+          required: true
+          schema:
+            $ref: "#/definitions/ValidationRequest"
+      responses:
+        200:
+          description: the token was validated successfully
+          schema:
+            $ref: "#/definitions/TokenResponse"
+        404:
+          description: the token cannot be found/validated
+    delete:
+      summary: drop/invalidate the token
+      parameters:
+        - name: id
+          in: path
+          description: the tokens id
+          required: true
+          type: string
+      responses:
+        200:
+          description: token has successfully been dropped
+        202:
+          description: the token never existed
+  /:
+    put:
+      summary: creates a new token
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: attempt to create a new token
+          schema:
+            $ref: "#/definitions/CreationRequest"
+      responses:
+        201:
+          description: the token successfully created
+          schema:
+            $ref: "#/definitions/TokenResponse"
+        202:
+          description: the token already exists, validity will not be extended.
+          schema:
+            $ref: "#/definitions/TokenResponse"
+
+definitions:
+  TokenResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        description: the tokens id
+      data:
+        type: object
+        description: the content of the token (can be user ids or any valid json object)
+      validThrough:
+        description: valid-until datetime of the token
+        type: string
+        format: date-time
+  CreationRequest:
+    type: object
+    properties:
+      data:
+        type: object
+        description: the content of the token (can be user ids or any valid json object)
+      validThrough:
+        description: valid-until datetime of the token
+        type: string
+        format: date-time
+  ValidationRequest:
+    type: object
+    properties:
+      validThrough:
+        description: valid-until datetime of the token
+        type: string
+        format: date-time
+
