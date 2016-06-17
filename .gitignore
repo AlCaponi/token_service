@@ -10,4 +10,6 @@ artifacts/
 *DS_Store
 *.sln.ide
 project.lock.json
-
+*.xproj
+.vs/
+.vscode/
