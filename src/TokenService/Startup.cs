@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using TokenService.Repositories;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
+using Microsoft.Extensions.Logging.Console;
 
 namespace aspnetcoreapp
 {
