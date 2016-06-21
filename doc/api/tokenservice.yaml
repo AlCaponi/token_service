@@ -73,8 +73,8 @@ paths:
       responses:
         200:
           description: token has successfully been dropped
-        202:
-          description: the token never existed
+        410:
+          description: the token may have existed but does not anymore; nothing removed!
   /:
     put:
       summary: creates a new token

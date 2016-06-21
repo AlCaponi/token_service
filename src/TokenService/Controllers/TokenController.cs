@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using TokenService.Repositories;
 using TokenService.Tokens;
@@ -77,6 +78,18 @@ namespace TokenService.Controllers
             }
 
             return NotFound();
+        }
+
+
+        [HttpDelete("{tokenId}")]
+        public IActionResult DeleteToken(string tokenId)
+        {
+            if(_repository.ContainsKey(tokenId)){
+                _repository.Remove(tokenId);
+                return Ok();
+            }
+            
+            return StatusCode((int)HttpStatusCode.Gone);
         }
     }
 }
