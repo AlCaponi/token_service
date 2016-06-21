@@ -25,9 +25,14 @@ namespace TokenService.Controllers
         }
 
         [HttpHead("{tokenid}")]
-        public IActionResult CheckToken()
+        public IActionResult CheckToken(string tokenid)
         {
-            return Ok();
+            if(_repository.ContainsKey(tokenid)
+                &&  _repository[tokenid].Expires > DateTimeOffset.UtcNow){
+                return Ok();
+            }
+
+            return NotFound();
         }
 
         [HttpPut]
@@ -58,7 +63,7 @@ namespace TokenService.Controllers
         [HttpPost("{tokenid}")]
         public IActionResult ValidateToken(string tokenid, [FromBody] ValidationRequest request)
         {
-            return Ok(new {id = "somerandomstring", whatHappened = "Token was validated!", validThrough = request.ValidThrough.AddDays(10) });
+            return Ok(new {id = "somerandomstring", whatHappened = "Token was validated!", expires = request.Expires.AddDays(10) });
         }
     }
 }

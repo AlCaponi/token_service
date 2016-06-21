@@ -105,7 +105,7 @@ definitions:
       data:
         type: object
         description: the content of the token (can be user ids or any valid json object)
-      validThrough:
+      expires:
         description: valid-until datetime of the token
         type: string
         format: date-time
@@ -115,14 +115,14 @@ definitions:
       data:
         type: object
         description: the content of the token (can be user ids or any valid json object)
-      validThrough:
+      expires:
         description: valid-until datetime of the token
         type: string
         format: date-time
   ValidationRequest:
     type: object
     properties:
-      validThrough:
+      expires:
         description: valid-until datetime of the token
         type: string
         format: date-time
