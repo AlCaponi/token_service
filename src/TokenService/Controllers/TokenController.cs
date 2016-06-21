@@ -1,7 +1,8 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using TokenService.Repositories;
+using TokenService.Tokens;
 using TokenService.Controllers.Models;
-using System;
 using Microsoft.Extensions.Logging;
 
 namespace TokenService.Controllers
@@ -21,7 +22,12 @@ namespace TokenService.Controllers
         [HttpGet("{tokenid}")]
         public IActionResult GetToken(string tokenid)
         {
-            return Ok(new {id = tokenid, content = "this could by anything!!", validThrough = DateTime.UtcNow });
+            if(_repository.ContainsKey(tokenid)){
+                var token = _repository[tokenid];
+                return Ok(new TokenResponse { ID = token.ID, Expires = token.Expires, Content = token.Content});
+            }
+
+            return NotFound();
         }
 
         [HttpHead("{tokenid}")]
@@ -63,7 +69,14 @@ namespace TokenService.Controllers
         [HttpPost("{tokenid}")]
         public IActionResult ValidateToken(string tokenid, [FromBody] ValidationRequest request)
         {
-            return Ok(new {id = "somerandomstring", whatHappened = "Token was validated!", expires = request.Expires.AddDays(10) });
+            Token subject = null;
+            if(_repository.TryGetValue(tokenid, out subject)){
+                subject.Prolong();
+                subject.Content = request.Content;
+                return Ok();
+            }
+
+            return NotFound();
         }
     }
 }

@@ -6,6 +6,8 @@ namespace TokenService.Controllers.Models
     {
         public string ID { get; set; }
 
-        public DateTimeOffset Expires { get; set; } 
+        public DateTimeOffset Expires { get; set; }
+
+        public object Content { get; set; }
     }
 }
