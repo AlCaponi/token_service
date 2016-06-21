@@ -19,22 +19,22 @@ namespace TokenService.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{tokenid}")]
-        public IActionResult GetToken(string tokenid)
+        [HttpGet("{tokenId}")]
+        public IActionResult GetToken(string tokenId)
         {
-            if(_repository.ContainsKey(tokenid)){
-                var token = _repository[tokenid];
+            if(_repository.ContainsKey(tokenId)){
+                var token = _repository[tokenId];
                 return Ok(new TokenResponse { ID = token.ID, Expires = token.Expires, Content = token.Content});
             }
 
             return NotFound();
         }
 
-        [HttpHead("{tokenid}")]
-        public IActionResult CheckToken(string tokenid)
+        [HttpHead("{tokenId}")]
+        public IActionResult CheckToken(string tokenId)
         {
-            if(_repository.ContainsKey(tokenid)
-                &&  _repository[tokenid].Expires > DateTimeOffset.UtcNow){
+            if(_repository.ContainsKey(tokenId)
+                &&  _repository[tokenId].Expires > DateTimeOffset.UtcNow){
                 return Ok();
             }
 
@@ -66,11 +66,11 @@ namespace TokenService.Controllers
                     );
         }
 
-        [HttpPost("{tokenid}")]
-        public IActionResult ValidateToken(string tokenid, [FromBody] ValidationRequest request)
+        [HttpPost("{tokenId}")]
+        public IActionResult ValidateToken(string tokenId, [FromBody] ValidationRequest request)
         {
             Token subject = null;
-            if(_repository.TryGetValue(tokenid, out subject)){
+            if(_repository.TryGetValue(tokenId, out subject)){
                 subject.Prolong();
                 subject.Content = request.Content;
                 return Ok();
