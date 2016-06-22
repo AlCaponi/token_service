@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using TokenService.Repositories;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Debug;
-using Microsoft.Extensions.Logging.Console;
 
-namespace aspnetcoreapp
+namespace TokenService.Hosting
 {
     public class Startup
     {
@@ -14,13 +12,24 @@ namespace aspnetcoreapp
         {
             services.AddSingleton<ITokenRepository, MemoryTokenRepository>();
             // Add framework services.
-            services.AddMvc();
+            services.AddLeanMvc();
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
+            if(env.IsDevelopment())
+            {
+                loggerFactory.AddConsole();
+                loggerFactory.AddDebug();
+            }
+
+            if(env.IsProduction() || env.IsStaging())
+            {
+                // Enable Metrics
+            }
+
             app.UseMvc();
         }
+
+
     }
 }

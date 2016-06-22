@@ -1,7 +1,9 @@
+using System;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using TokenService.Repositories;
+using TokenService.Tokens;
 using TokenService.Controllers.Models;
-using System;
 using Microsoft.Extensions.Logging;
 
 namespace TokenService.Controllers
@@ -18,16 +20,26 @@ namespace TokenService.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{tokenid}")]
-        public IActionResult GetToken(string tokenid)
+        [HttpGet("{tokenId}")]
+        public IActionResult GetToken(string tokenId)
         {
-            return Ok(new {id = tokenid, content = "this could by anything!!", validThrough = DateTime.UtcNow });
+            if(_repository.ContainsKey(tokenId)){
+                var token = _repository[tokenId];
+                return Ok(new TokenResponse { ID = token.ID, Expires = token.Expires, Content = token.Content});
+            }
+
+            return NotFound();
         }
 
-        [HttpHead("{tokenid}")]
-        public IActionResult CheckToken()
+        [HttpHead("{tokenId}")]
+        public IActionResult CheckToken(string tokenId)
         {
-            return Ok();
+            if(_repository.ContainsKey(tokenId)
+                &&  _repository[tokenId].Expires > DateTimeOffset.UtcNow){
+                return Ok();
+            }
+
+            return NotFound();
         }
 
         [HttpPut]
@@ -55,10 +67,29 @@ namespace TokenService.Controllers
                     );
         }
 
-        [HttpPost("{tokenid}")]
-        public IActionResult ValidateToken(string tokenid, [FromBody] ValidationRequest request)
+        [HttpPost("{tokenId}")]
+        public IActionResult ValidateToken(string tokenId, [FromBody] ValidationRequest request)
         {
-            return Ok(new {id = "somerandomstring", whatHappened = "Token was validated!", validThrough = request.ValidThrough.AddDays(10) });
+            Token subject = null;
+            if(_repository.TryGetValue(tokenId, out subject)){
+                subject.Prolong();
+                subject.Content = request.Content;
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+
+        [HttpDelete("{tokenId}")]
+        public IActionResult DeleteToken(string tokenId)
+        {
+            if(_repository.ContainsKey(tokenId)){
+                _repository.Remove(tokenId);
+                return Ok();
+            }
+            
+            return StatusCode((int)HttpStatusCode.Gone);
         }
     }
 }

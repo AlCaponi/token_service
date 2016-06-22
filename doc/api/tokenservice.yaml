@@ -73,8 +73,8 @@ paths:
       responses:
         200:
           description: token has successfully been dropped
-        202:
-          description: the token never existed
+        410:
+          description: the token may have existed but does not anymore; nothing removed!
   /:
     put:
       summary: creates a new token
@@ -102,27 +102,27 @@ definitions:
       id:
         type: string
         description: the tokens id
-      data:
+      content:
         type: object
         description: the content of the token (can be user ids or any valid json object)
-      validThrough:
+      expires:
         description: valid-until datetime of the token
         type: string
         format: date-time
   CreationRequest:
     type: object
     properties:
-      data:
+      content:
         type: object
         description: the content of the token (can be user ids or any valid json object)
-      validThrough:
+      expires:
         description: valid-until datetime of the token
         type: string
         format: date-time
   ValidationRequest:
     type: object
     properties:
-      validThrough:
+      expires:
         description: valid-until datetime of the token
         type: string
         format: date-time
