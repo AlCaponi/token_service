@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 
-namespace aspnetcoreapp
+namespace TokenService
 {
     public class Program
     {
@@ -9,7 +8,7 @@ namespace aspnetcoreapp
         {
             var host = new WebHostBuilder()
                 .UseKestrel()
-                .UseStartup<Startup>()
+                .UseStartup<Hosting.Startup>()
                 .Build();
 
             host.Run();
